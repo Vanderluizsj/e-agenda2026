@@ -1,0 +1,37 @@
+@{
+    Layout = "_Layout";
+    ViewBag.Titulo = "Início";
+}
+
+<div class="row g-4 pb-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 glass-card">
+            <div class="card-body text-center p-4">
+                <h5 class="card-title text-primary fw-bold">Categorias</h5>
+                <p class="card-text text-body-secondary">Cadastre as categorias de instrutores</p>
+                <a class="btn btn-primary rounded-pill px-4 mt-2 shadow-sm" asp-controller="Categoria"
+                   asp-action="Listar">Acessar</a>
+            </div>            
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 glass-card">
+            <div class="card-body text-center p-4">
+                <h5 class="card-title text-primary fw-bold">Despesas</h5>
+                <p class="card-text text-body-secondary">Cadastre as suas despesas diarias</p>
+                <a class="btn btn-primary rounded-pill px-4 mt-2 shadow-sm" asp-controller="Despesa"
+                   asp-action="Listar">Acessar</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 glass-card">
+            <div class="card-body text-center p-4">
+                <h5 class="card-title text-primary fw-bold">Tarefas</h5>
+                <p class="card-text text-body-secondary">Cadastre e gerencie as suas tarefas diarias</p>
+                <a class="btn btn-primary rounded-pill px-4 mt-2 shadow-sm" asp-controller="Tarefa"
+                   asp-action="Listar">Acessar</a>
+            </div>
+        </div>
+    </div>
+</div>

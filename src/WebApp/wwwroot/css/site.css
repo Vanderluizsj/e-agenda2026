@@ -1,0 +1,83 @@
+/* =========================================
+   VARIÁVEIS DE TEMA (CLARO E ESCURO)
+   ========================================= */
+
+/* Tema Claro (Padrão) */
+:root {
+    --bg-gradient: linear-gradient(135deg, #cff5e0 0%, #8e90fc 100%);
+    --glass-bg: rgba(255, 255, 255, 0.322);
+    
+    /*Deixa o card interno levemente branco no claro */
+    --card-glass-bg: rgba(255, 255, 255, 0.342); 
+    
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-shadow: rgba(31, 38, 135, 0.329);
+    --nav-glass-bg: rgba(255, 255, 255, 0.6);
+}
+
+/* Tema Escuro (Ativado pelo botão do Bootstrap) */
+[data-bs-theme="dark"] {
+    --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #0a125a 100%);
+    --glass-bg: rgba(0, 0, 0, 0.295); /* Fundo do painel principal */
+    
+    /* Deixa o card interno mais transparente no dark mode */
+    --card-glass-bg: rgba(255, 255, 255, 0.15); 
+    
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: rgba(0, 0, 0, 0.4);
+    --nav-glass-bg: rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================
+   ESTILOS GERAIS E EFEITO VIDRO
+   ========================================= */
+
+/* Aplicando o gradiente dinâmico no body */
+body {
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    background-attachment: fixed;
+    transition: background 0.5s ease; /* Transição suave ao trocar de tema */
+}
+
+/* Navbar com efeito de vidro adaptável */
+.navbar-glass {
+    background: var(--nav-glass-bg) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border) !important;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* Card de Vidro adaptável */
+.glass-card {
+    background: var(--card-glass-bg); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 16px 0 var(--glass-shadow); /* Sombra um pouco menor no card interno */
+    border-radius: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+/* Efeito de flutuar ao passar o mouse */
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 var(--glass-shadow);
+}
+/* Painel principal que engloba o conteúdo */
+.main-glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 var(--glass-shadow);
+    margin-top: 1rem;
+}
+
+/* Classe auxiliar para a linha sutil abaixo do título */
+.glass-header {
+    border-bottom-color: var(--glass-border) !important;
+}
