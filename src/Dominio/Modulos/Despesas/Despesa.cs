@@ -1,6 +1,6 @@
+using System;
 using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.Modulos.Categorias;
-using eAgenda.Dominio.Modulos.Despesas;
 
 namespace eAgenda.Dominio.Modulos.Despesas;
 
@@ -8,21 +8,22 @@ public sealed class Despesa : EntidadeBase<Despesa>
 {
     public string Descricao { get; set; } = string.Empty;
     public DateOnly DataOcorrencia { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
-
-    public decimal Valor { get; set; } = 0;
-    public FormaPagamento FormaPagamento { get; set; } = FormaPagamento.AVista;
+    public decimal Valor { get; set; }
+    public FormaPagamento FormaPagamento { get; set; }
     public List<Categoria> Categorias { get; set; } = [];
 
     public Despesa() { }
+
     public Despesa(
         string descricao,
-        DateOnly dataOcurrencia,
+        DateOnly dataOcorrencia,
         decimal valor,
         FormaPagamento formaPagamento,
-        List<Categoria> categorias)
+        List<Categoria> categorias
+    )
     {
         Descricao = descricao ?? string.Empty;
-        DataOcorrencia = dataOcurrencia;
+        DataOcorrencia = dataOcorrencia;
         Valor = valor;
         FormaPagamento = formaPagamento;
         Categorias = categorias;

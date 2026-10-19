@@ -22,6 +22,21 @@ namespace eAgenda.Infraestrutura.Compartilhado.Orm.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TBDespesasCategorias", b =>
+                {
+                    b.Property<Guid>("CategoriasId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DespesasId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CategoriasId", "DespesasId");
+
+                    b.HasIndex("DespesasId");
+
+                    b.ToTable("TBDespesasCategorias");
+                });
+
             modelBuilder.Entity("eAgenda.Dominio.Modulos.Categorias.Categoria", b =>
                 {
                     b.Property<Guid>("Id")
@@ -38,6 +53,116 @@ namespace eAgenda.Infraestrutura.Compartilhado.Orm.Migrations
                         .IsUnique();
 
                     b.ToTable("TBCategorias", (string)null);
+                });
+
+            modelBuilder.Entity("eAgenda.Dominio.Modulos.Despesas.Despesa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("DataOcorrencia")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FormaPagamento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TBDespesas", (string)null);
+                });
+
+            modelBuilder.Entity("eAgenda.Dominio.Modulos.Tarefas.ItemTarefa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Concluido")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TarefaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TarefaId");
+
+                    b.ToTable("TBItensTarefa", (string)null);
+                });
+
+            modelBuilder.Entity("eAgenda.Dominio.Modulos.Tarefas.Tarefa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Concluida")
+                        .HasColumnType("bit");
+
+                    b.Property<DateOnly?>("DataConclusao")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("DataCriacao")
+                        .HasColumnType("date");
+
+                    b.Property<int>("PercentualConcluido")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Prioridade")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TBTarefas", (string)null);
+                });
+
+            modelBuilder.Entity("TBDespesasCategorias", b =>
+                {
+                    b.HasOne("eAgenda.Dominio.Modulos.Categorias.Categoria", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eAgenda.Dominio.Modulos.Despesas.Despesa", null)
+                        .WithMany()
+                        .HasForeignKey("DespesasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("eAgenda.Dominio.Modulos.Tarefas.ItemTarefa", b =>
+                {
+                    b.HasOne("eAgenda.Dominio.Modulos.Tarefas.Tarefa", "Tarefa")
+                        .WithMany("Itens")
+                        .HasForeignKey("TarefaId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Tarefa");
+                });
+
+            modelBuilder.Entity("eAgenda.Dominio.Modulos.Tarefas.Tarefa", b =>
+                {
+                    b.Navigation("Itens");
                 });
 #pragma warning restore 612, 618
         }
