@@ -4,7 +4,7 @@
 
 /* Tema Claro (Padrão) */
 :root {
-    --bg-gradient: linear-gradient(135deg, #cff5e0 0%, #8e90fc 100%);
+    --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e0eafc 50%, #cfdef3 100%);
     --glass-bg: rgba(255, 255, 255, 0.322);
     
     /*Deixa o card interno levemente branco no claro */
@@ -17,7 +17,7 @@
 
 /* Tema Escuro (Ativado pelo botão do Bootstrap) */
 [data-bs-theme="dark"] {
-    --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #0a125a 100%);
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #172554 100%);
     --glass-bg: rgba(0, 0, 0, 0.295); /* Fundo do painel principal */
     
     /* Deixa o card interno mais transparente no dark mode */
@@ -81,3 +81,4 @@ body {
 .glass-header {
     border-bottom-color: var(--glass-border) !important;
 }
+
