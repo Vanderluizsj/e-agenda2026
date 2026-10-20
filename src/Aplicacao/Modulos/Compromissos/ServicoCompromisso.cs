@@ -1,35 +1,47 @@
 using eAgenda.Aplicacao.Modulos.Contatos;
 using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.Modulos.Compromissos;
+using eAgenda.Dominio.Modulos.Contatos;
 using FluentResults;
 
 namespace eAgenda.Aplicacao.Modulos.Compromissos;
 
-public sealed class ServicoCompromisso(IRepositorioCompromisso repositorioCompromisso)
+public sealed class ServicoCompromisso(
+    IRepositorioCompromisso repositorioCompromisso,
+    IRepositorioContato repositorioContato
+)
 {
     public Result<Guid> Cadastrar(CadastrarCompromissoDto dto)
     {
-        Compromisso Compromisso = new(
+        Contato? contato = null;
+
+        if (dto.IdContato.HasValue && dto.IdContato.Value != Guid.Empty)
+            contato = repositorioContato.SelecionarPorId(dto.IdContato.Value);
+
+        Compromisso compromisso = new(
             dto.Assunto,
             dto.DataDeOcorrencia,
             dto.HoraDeInicio,
             dto.HoraDeTermino,
             dto.Tipo,
             dto.Local,
-            dto.IdContato
-            );
+            contato
+        );
 
-        List<ErroValidacao> erros = Compromisso.Validar();
+        List<ErroValidacao> erros = compromisso.Validar();
 
-        if (repositorioCompromisso.ExisteCompromissoNaDataEHora(Compromisso.DataDeOcorrencia, Compromisso.HoraDeInicio, Compromisso.HoraDeTermino))
+        if (repositorioCompromisso.ExisteCompromissoNaDataEHora(
+            compromisso.DataDeOcorrencia,
+            compromisso.HoraDeInicio,
+            compromisso.HoraDeTermino))
         {
             erros.Add(new ErroValidacao
             {
-                Campo = nameof(dto.DataDeOcorrencia),
-                Mensagem = "Já existe um compromisso cadastrado na data e hora informadas"
+                Campo = nameof(dto.HoraDeInicio),
+                Mensagem = "Já existe um compromisso cadastrado nesse horário."
             });
         }
-        
+
         if (erros.Count > 0)
         {
             List<Error> errosResultado = erros
@@ -38,23 +50,40 @@ public sealed class ServicoCompromisso(IRepositorioCompromisso repositorioCompro
             return Result.Fail(errosResultado);
         }
 
-        repositorioCompromisso.Cadastrar(Compromisso);
+        repositorioCompromisso.Cadastrar(compromisso);
 
-        return Result.Ok(Compromisso.Id);
+        return Result.Ok(compromisso.Id);
     }
 
     public Result Editar(EditarCompromissoDto dto)
     {
-        Compromisso compromissoAtualizado = new(dto.Assunto, dto.DataDeOcorrencia, dto.HoraDeInicio, dto.HoraDeTermino, dto.Tipo, dto.Local, dto.IdContato);
+        Contato? contato = null;
+
+        if (dto.IdContato.HasValue && dto.IdContato.Value != Guid.Empty)
+            contato = repositorioContato.SelecionarPorId(dto.IdContato.Value);
+
+        Compromisso compromissoAtualizado = new(
+            dto.Assunto,
+            dto.DataDeOcorrencia,
+            dto.HoraDeInicio,
+            dto.HoraDeTermino,
+            dto.Tipo,
+            dto.Local,
+            contato
+        );
 
         List<ErroValidacao> erros = compromissoAtualizado.Validar();
 
-        if (repositorioCompromisso.ExisteCompromissoNaDataEHora(compromissoAtualizado.DataDeOcorrencia, compromissoAtualizado.HoraDeInicio, compromissoAtualizado.HoraDeTermino))
+        if (repositorioCompromisso.ExisteCompromissoNaDataEHora(
+            compromissoAtualizado.DataDeOcorrencia,
+            compromissoAtualizado.HoraDeInicio,
+            compromissoAtualizado.HoraDeTermino,
+            dto.Id))
         {
             erros.Add(new ErroValidacao
             {
-                Campo = nameof(dto.DataDeOcorrencia),
-                Mensagem = "Já existe um compromisso cadastrado na data e hora informadas"
+                Campo = nameof(dto.HoraDeInicio),
+                Mensagem = "Já existe um compromisso cadastrado nesse horário."
             });
         }
 
@@ -66,7 +95,10 @@ public sealed class ServicoCompromisso(IRepositorioCompromisso repositorioCompro
             return Result.Fail(errosResultado);
         }
 
-        repositorioCompromisso.Editar(dto.Id, compromissoAtualizado);
+        bool conseguiuEditar = repositorioCompromisso.Editar(dto.Id, compromissoAtualizado);
+
+        if (!conseguiuEditar)
+            return Result.Fail("Não foi possível editar o compromisso.");
 
         return Result.Ok();
     }
@@ -96,14 +128,16 @@ public sealed class ServicoCompromisso(IRepositorioCompromisso repositorioCompro
             compromisso.HoraDeTermino,
             compromisso.Tipo,
             compromisso.Local,
-            new ContatoDto(
-                compromisso.Contato.Id,
-                compromisso.Contato.Nome,
-                compromisso.Contato.Telefone,
-                compromisso.Contato.Email,
-                compromisso.Contato.Cargo,
-                compromisso.Contato.Empresa
-            )
+            compromisso.Contato is null
+                ? null
+                : new ContatoDto(
+                    compromisso.Contato.Id,
+                    compromisso.Contato.Nome,
+                    compromisso.Contato.Telefone,
+                    compromisso.Contato.Email,
+                    compromisso.Contato.Cargo,
+                    compromisso.Contato.Empresa
+                )
         ));
     }
 
@@ -120,15 +154,18 @@ public sealed class ServicoCompromisso(IRepositorioCompromisso repositorioCompro
                 c.HoraDeTermino,
                 c.Tipo,
                 c.Local,
-                new ContatoDto(
-                    c.Contato.Id,
-                    c.Contato.Nome,
-                    c.Contato.Telefone,
-                    c.Contato.Email,
-                    c.Contato.Cargo,
-                    c.Contato.Empresa
-                )
+                c.Contato is null
+                    ? null
+                    : new ContatoDto(
+                        c.Contato.Id,
+                        c.Contato.Nome,
+                        c.Contato.Telefone,
+                        c.Contato.Email,
+                        c.Contato.Cargo,
+                        c.Contato.Empresa
+                    )
             ))
             .ToList();
     }
 }
+

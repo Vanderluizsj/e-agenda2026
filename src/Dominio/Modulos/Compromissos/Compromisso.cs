@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using eAgenda.Dominio.Compartilhado;
 using eAgenda.Dominio.Modulos.Contatos;
 
@@ -18,7 +17,7 @@ public class Compromisso : EntidadeBase<Compromisso>
     public TimeOnly HoraDeTermino { get; set; } = TimeOnly.MinValue;
     public TipoCompromisso Tipo { get; set; } = TipoCompromisso.Presencial;
     public string Local { get; set; } = string.Empty;
-    public Contato Contato { get; set; } = new Contato();
+    public Contato? Contato { get; set; }
 
     public Compromisso()
     {
@@ -31,15 +30,15 @@ public class Compromisso : EntidadeBase<Compromisso>
         TimeOnly horaDeTermino,
         TipoCompromisso tipo,
         string local,
-        Contato contato
+        Contato? contato = null
     ) : this()
     {
-        Assunto = assunto;
+        Assunto = assunto ?? string.Empty;
         DataDeOcorrencia = dataDeOcorrencia;
         HoraDeInicio = horaDeInicio;
         HoraDeTermino = horaDeTermino;
         Tipo = tipo;
-        Local = local;
+        Local = local ?? string.Empty;
         Contato = contato;
     }
 
@@ -55,7 +54,39 @@ public class Compromisso : EntidadeBase<Compromisso>
                     Campo = nameof(Assunto),
                     Mensagem = "O campo \"Assunto\" deve conter entre 2 e 100 caracteres."
                 });
-        }        
+        }
+
+        if (DataDeOcorrencia == DateOnly.MinValue)
+        {
+            erros.Add(
+                new ErroValidacao
+                {
+                    Campo = nameof(DataDeOcorrencia),
+                    Mensagem = "O campo \"Data de Ocorrência\" deve conter uma data válida."
+                });
+        }
+
+        if (HoraDeTermino <= HoraDeInicio)
+        {
+            erros.Add(
+                new ErroValidacao
+                {
+                    Campo = nameof(HoraDeTermino),
+                    Mensagem = "A \"Hora de Término\" deve ser maior que a \"Hora de Início\"."
+                });
+        }
+
+        if (string.IsNullOrWhiteSpace(Local))
+        {
+            erros.Add(
+                new ErroValidacao
+                {
+                    Campo = nameof(Local),
+                    Mensagem = Tipo == TipoCompromisso.Online
+                        ? "O campo \"Link\" é obrigatório para compromissos online."
+                        : "O campo \"Local\" é obrigatório para compromissos presenciais."
+                });
+        }
 
         return erros;
     }

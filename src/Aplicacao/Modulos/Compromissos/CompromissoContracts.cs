@@ -13,7 +13,7 @@ public record CompromissoDto(
     TimeOnly HoraDeTermino,
     TipoCompromisso Tipo,
     string Local,
-    ContatoDto Contato
+    ContatoDto? Contato
 );
 
 public record CadastrarCompromissoDto(
@@ -23,7 +23,7 @@ public record CadastrarCompromissoDto(
     TimeOnly HoraDeTermino,
     TipoCompromisso Tipo,
     string Local,
-    Guid IdContato
+    Guid? IdContato
 );
 
 public record EditarCompromissoDto(
@@ -34,6 +34,5 @@ public record EditarCompromissoDto(
     TimeOnly HoraDeTermino,
     TipoCompromisso Tipo,
     string Local,
-    Guid IdContato
+    Guid? IdContato
 );
-

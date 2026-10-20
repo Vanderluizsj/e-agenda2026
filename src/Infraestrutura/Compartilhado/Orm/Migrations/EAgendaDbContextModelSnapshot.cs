@@ -55,6 +55,44 @@ namespace eAgenda.Infraestrutura.Compartilhado.Orm.Migrations
                     b.ToTable("TBCategorias", (string)null);
                 });
 
+            modelBuilder.Entity("eAgenda.Dominio.Modulos.Compromissos.Compromisso", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Assunto")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("ContatoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("DataDeOcorrencia")
+                        .HasColumnType("date");
+
+                    b.Property<TimeOnly>("HoraDeInicio")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("HoraDeTermino")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Local")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContatoId");
+
+                    b.ToTable("TBCompromissos", (string)null);
+                });
+
             modelBuilder.Entity("eAgenda.Dominio.Modulos.Contatos.Contato", b =>
                 {
                     b.Property<Guid>("Id")
@@ -191,6 +229,16 @@ namespace eAgenda.Infraestrutura.Compartilhado.Orm.Migrations
                         .HasForeignKey("DespesasId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("eAgenda.Dominio.Modulos.Compromissos.Compromisso", b =>
+                {
+                    b.HasOne("eAgenda.Dominio.Modulos.Contatos.Contato", "Contato")
+                        .WithMany()
+                        .HasForeignKey("ContatoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Contato");
                 });
 
             modelBuilder.Entity("eAgenda.Dominio.Modulos.Tarefas.ItemTarefa", b =>
