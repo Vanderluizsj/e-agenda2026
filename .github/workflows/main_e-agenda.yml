@@ -6,7 +6,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - e-agenda
 on:
   push:
     branches:
-      - 'main'
+      - main
   workflow_dispatch:
 
 jobs:
@@ -34,10 +34,46 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
+		  
+		  
+  migrate:
+    runs-on: windows-latest
+    needs: build
+    permissions:
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+        
+      - name: Restore dependencies
+        run: dotnet restore WebApp/eAgenda.WebApp.csproj
+
+      - name: Install Entity Framework Core tools
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+
+      - name: Apply database migrations
+        env:
+          SQLSERVER_CONNECTIONSTRING: ${{secrets.SQLSERVER_CONNECTIONSTRING}}
+        run: |
+          dotnet ef database update `
+            --project "WebApp/eAgenda.WebApp.csproj" `
+            --startup-project "WebApp/eAgenda.WebApp.csproj" `
+            --configuration Release `
+            --connection "$ENV:SQLSERVER_CONNECTIONSTRING"
 
   deploy:
     runs-on: windows-latest
-    needs: build
+    needs: [build, migrate]
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
@@ -55,6 +91,14 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0BB11CAC501346FAAE960EF11D8D724C }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_EAA6E8B170284785AC00B76ED80739AA }}
 
+      - name: Configure Azure Web App settings
+        shell: pwsh
+        run: |
+         az webapp config appsettings set `
+            --name e-agenda`
+            --resource-group e-agenda`
+            --settings `
+              "ConnectionStrings__SqlServer=${{ secrets.SQLSERVER_CONNECTIONSTRING }}"
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
