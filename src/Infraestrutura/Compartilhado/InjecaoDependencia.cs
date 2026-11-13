@@ -19,16 +19,16 @@ public static class InjecaoDependencia
 {
     public static void AdicionarCamadaInfraestrutura(this IServiceCollection services, IConfiguration configuration)
     {
-         services.AddDbContext<EAgendaDbContext>(options =>
-        {
-            string? connectionString = configuration.GetConnectionString("SqlServer");
+        services.AddDbContext<EAgendaDbContext>(options =>
+       {
+           string? connectionString = configuration.GetConnectionString("SqlServer");
 
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new InvalidOperationException("A ConnectionStrings:SqlServer não foi configurada.");
+           if (string.IsNullOrWhiteSpace(connectionString))
+               throw new InvalidOperationException("A ConnectionStrings:SqlServer não foi configurada.");
 
-            options.UseSqlServer(connectionString, cfg => cfg.EnableRetryOnFailure(3));
-        });
-
+           options.UseSqlServer(connectionString, cfg => cfg.EnableRetryOnFailure(3));
+       });
+       
         services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmOrm>();        
         services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmOrm>();
         services.AddScoped<IRepositorioTarefa, RepositorioTarefaEmOrm>();
