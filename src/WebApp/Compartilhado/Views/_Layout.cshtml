@@ -24,6 +24,8 @@
             </button>
 
             <div class="collapse navbar-collapse" id="menuPrincipal">
+                @if (User.Identity?.IsAuthenticated == true)
+                    {
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link fw-medium" asp-controller="Home" asp-action="Index">Início</a>
@@ -50,7 +52,32 @@
                             <i id="themeIcon" class="bi bi-moon"></i>
                         </button>
                     </li>
-                </ul>
+                    <span class="nav-link">@User.Identity.Name</span>
+                        <form asp-controller="Autenticacao" asp-action="Logout" method="post">
+                            <button class="btn btn-link nav-link" type="submit">Sair</button>
+                        </form>
+                 </ul> 
+                 }
+                    else
+                    {
+                        <ul class="navbar-nav ms-auto">
+                        
+                            <li class="nav-item ms-3">
+                                <a class="nav-link fw-medium" asp-controller="Autenticacao" asp-action="Login">Entrar</a>
+                                </li>
+                            <li class="nav-item ms-3">
+                                <a class="nav-link fw-medium" asp-controller="Autenticacao" asp-action="Cadastro">Criar conta</a>
+                                </li>
+                                <li class="nav-item ms-3">
+                        <button id="themeToggle"
+                            class="btn btn-sm btn-outline-secondary"
+                            type="button">
+                            <i id="themeIcon" class="bi bi-moon"></i>
+                        </button>
+                    </li>
+                        </ul>                     
+                        
+                    }
             </div>
         </div>
     </nav>

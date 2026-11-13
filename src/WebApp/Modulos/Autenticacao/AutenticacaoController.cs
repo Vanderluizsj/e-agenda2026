@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eAgenda.WebApp.Modulos.Autenticacao;
 
-[Route("[controller]")]
 public class AutenticacaoController(
     UserManager<UsuarioIdentity> userManager, // responsável pela criação de usuários e obtenção dos dados do mesmo
     SignInManager<UsuarioIdentity> signInManager // responsável pelo login/logout de usuários já criados
