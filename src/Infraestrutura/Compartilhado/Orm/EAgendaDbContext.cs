@@ -1,3 +1,4 @@
+using Dominio.Compartilhado;
 using eAgenda.Dominio.Modulos.Categorias;
 using eAgenda.Dominio.Modulos.Compromissos;
 using eAgenda.Dominio.Modulos.Contatos;
@@ -11,7 +12,9 @@ using Microsoft.EntityFrameworkCore;
 namespace eAgenda.Infraestrutura.Compartilhado.Orm;
 
 public sealed class EAgendaDbContext(
-    DbContextOptions<EAgendaDbContext> options) : 
+    DbContextOptions<EAgendaDbContext> options,
+    IProvedorUsuarioAtual usuarioAtual
+    ) : 
     IdentityDbContext<UsuarioIdentity, IdentityRole<Guid>, Guid>(options)
 {
      public DbSet<Categoria> Categorias => Set<Categoria>();
@@ -25,5 +28,13 @@ public sealed class EAgendaDbContext(
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(EAgendaDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
+
+          // QueryFilter aplica um filtro global para isolar os dados de cada usuário.
+        modelBuilder.Entity<Categoria>().HasQueryFilter(c => c.UsuarioId == usuarioAtual.Id);
+        modelBuilder.Entity<Despesa>().HasQueryFilter(c => c.UsuarioId == usuarioAtual.Id);
+        modelBuilder.Entity<Tarefa>().HasQueryFilter(c => c.UsuarioId == usuarioAtual.Id);
+        modelBuilder.Entity<ItemTarefa>().HasQueryFilter(c => c.UsuarioId == usuarioAtual.Id);
+        modelBuilder.Entity<Contato>().HasQueryFilter(c => c.UsuarioId == usuarioAtual.Id);
+        modelBuilder.Entity<Compromisso>().HasQueryFilter(c => c.UsuarioId == usuarioAtual.Id);
     }
 }

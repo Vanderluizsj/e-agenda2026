@@ -10,8 +10,9 @@ public sealed class Categoria : EntidadeBase<Categoria>
     public List<Despesa> Despesas { get; set; } = [];
     public Categoria(){}
 
-    public Categoria(string titulo) : this()
+    public Categoria(Guid usuarioId, string titulo) : this()
     {
+        UsuarioId = usuarioId;
         Titulo = titulo;
     }
      public override List<ErroValidacao> Validar()

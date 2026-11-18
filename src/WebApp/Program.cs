@@ -1,3 +1,4 @@
+using Dominio.Compartilhado;
 using eAgenda.Aplicacao.Compartilhado;
 using eAgenda.Infraestrutura.Compartilhado;
 using eAgenda.Infraestrutura.Compartilhado.Identity;
@@ -5,6 +6,7 @@ using eAgenda.Infraestrutura.Compartilhado.Orm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebApp.Modulos.Autenticacao;
 var builder = WebApplication.CreateBuilder(args);
 
 //Configura camada de Infraestrutura
@@ -49,6 +51,9 @@ builder.Services.AddAuthorization(options =>
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser().Build();
 });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IProvedorUsuarioAtual, ProvedorUsuarioAtualHttp>();
 
 var app = builder.Build();
 
